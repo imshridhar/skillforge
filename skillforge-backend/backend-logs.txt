@@ -1,0 +1,318 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------------< com.skillforge:skillforge-backend >------------------
+[INFO] Building skillforge-backend 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.2.2:run (default-cli) > test-compile @ skillforge-backend >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ skillforge-backend ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ skillforge-backend ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ skillforge-backend ---
+[INFO] skip non existing resourceDirectory C:\Users\shrid\Downloads\skillForge\skillforge-backend\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ skillforge-backend ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] <<< spring-boot:3.2.2:run (default-cli) < test-compile @ skillforge-backend <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.2.2:run (default-cli) @ skillforge-backend ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.2)
+
+2026-03-15T14:03:09.386+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] com.skillforge.SkillforgeApplication     : Starting SkillforgeApplication using Java 21.0.4 with PID 8424 (C:\Users\shrid\Downloads\skillForge\skillforge-backend\target\classes started by shrid in C:\Users\shrid\Downloads\skillForge\skillforge-backend)
+2026-03-15T14:03:09.388+05:30 DEBUG 8424 --- [skillforge-backend] [  restartedMain] com.skillforge.SkillforgeApplication     : Running with Spring Boot v3.2.2, Spring v6.1.3
+2026-03-15T14:03:09.389+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] com.skillforge.SkillforgeApplication     : No active profile set, falling back to 1 default profile: "default"
+2026-03-15T14:03:09.439+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-03-15T14:03:09.439+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-03-15T14:03:10.267+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-15T14:03:10.363+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 87 ms. Found 9 JPA repository interfaces.
+2026-03-15T14:03:11.055+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8081 (http)
+2026-03-15T14:03:11.069+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-03-15T14:03:11.069+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2026-03-15T14:03:11.111+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-03-15T14:03:11.112+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1672 ms
+2026-03-15T14:03:11.142+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-03-15T14:03:11.204+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@245f5e81
+2026-03-15T14:03:11.205+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-03-15T14:03:11.214+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:postgresql://localhost:5432/skillforge'
+2026-03-15T14:03:11.330+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-15T14:03:11.407+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.1.Final
+2026-03-15T14:03:11.453+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-03-15T14:03:11.803+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-15T14:03:11.902+05:30  WARN 8424 --- [skillforge-backend] [  restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-15T14:03:13.343+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-15T14:03:13.619+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-15T14:03:13.949+05:30 DEBUG 8424 --- [skillforge-backend] [  restartedMain] c.s.security.JwtAuthenticationFilter     : Filter 'jwtAuthenticationFilter' configured for use
+2026-03-15T14:03:14.093+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-03-15T14:03:15.047+05:30  WARN 8424 --- [skillforge-backend] [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-15T14:03:15.618+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@371494cd, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@1ae2d766, org.springframework.security.web.context.SecurityContextHolderFilter@7628926a, org.springframework.security.web.header.HeaderWriterFilter@69d0df1, org.springframework.web.filter.CorsFilter@3f416d9f, org.springframework.security.web.authentication.logout.LogoutFilter@74685ec5, com.skillforge.security.JwtAuthenticationFilter@58c07b4c, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@5d7ca0, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@18ad42ff, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@397db4f8, org.springframework.security.web.session.SessionManagementFilter@1d4cd474, org.springframework.security.web.access.ExceptionTranslationFilter@4c14dcc5, org.springframework.security.web.access.intercept.AuthorizationFilter@72faef9a]
+2026-03-15T14:03:15.855+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2026-03-15T14:03:15.893+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8081 (http) with context path ''
+2026-03-15T14:03:15.901+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] com.skillforge.SkillforgeApplication     : Started SkillforgeApplication in 6.917 seconds (process running for 7.738)
+2026-03-15T14:03:15.921+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] c.skillforge.config.SchemaRepairRunner   : Verified legacy exams table columns before repository access.
+2026-03-15T14:03:15.930+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] c.skillforge.config.SchemaRepairRunner   : Dropped all check constraints on learning_content (Hibernate will recreate).
+2026-03-15T14:03:15.932+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] c.skillforge.config.SchemaRepairRunner   : Dropped all check constraints on exam_questions (Hibernate will recreate).
+Hibernate: 
+    select
+        u1_0.user_id 
+    from
+        users u1_0 
+    where
+        u1_0.email=? 
+    fetch
+        first ? rows only
+Hibernate: 
+    select
+        u1_0.user_id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.first_name,
+        u1_0.is_active,
+        u1_0.is_verified,
+        u1_0.last_login,
+        u1_0.last_name,
+        u1_0.password_hash,
+        u1_0.profile_picture_url,
+        u1_0.role,
+        u1_0.updated_at 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        u1_0.user_id 
+    from
+        users u1_0 
+    where
+        u1_0.email=? 
+    fetch
+        first ? rows only
+Hibernate: 
+    select
+        u1_0.user_id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.first_name,
+        u1_0.is_active,
+        u1_0.is_verified,
+        u1_0.last_login,
+        u1_0.last_name,
+        u1_0.password_hash,
+        u1_0.profile_picture_url,
+        u1_0.role,
+        u1_0.updated_at 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        u1_0.user_id 
+    from
+        users u1_0 
+    where
+        u1_0.email=? 
+    fetch
+        first ? rows only
+Hibernate: 
+    select
+        u1_0.user_id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.first_name,
+        u1_0.is_active,
+        u1_0.is_verified,
+        u1_0.last_login,
+        u1_0.last_name,
+        u1_0.password_hash,
+        u1_0.profile_picture_url,
+        u1_0.role,
+        u1_0.updated_at 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        count(*) 
+    from
+        learning_goals lg1_0
+Hibernate: 
+    select
+        count(*) 
+    from
+        system_config sc1_0
+-----
+SkillForge Backend Started Successfully!
+-----
+credentials:
+  Admin: admin@skillforge.com / admin123
+  Instructor: instructor@skillforge.com / instructor123
+  Learner: learner@skillforge.com / learner123
+-----
+Hibernate: 
+    select
+        count(*) 
+    from
+        users u1_0
+2026-03-15T14:03:16.094+05:30  INFO 8424 --- [skillforge-backend] [  restartedMain] com.skillforge.config.DataSeeder         : Database already contains data — checking for missing course content.
+Hibernate: 
+    select
+        lg1_0.goal_id,
+        lg1_0.created_at,
+        lg1_0.description,
+        lg1_0.difficulty_level,
+        lg1_0.instructor_id,
+        lg1_0.is_published,
+        lg1_0.learning_outcomes,
+        lg1_0.prerequisites,
+        lg1_0.subject,
+        lg1_0.title,
+        lg1_0.updated_at 
+    from
+        learning_goals lg1_0
+Hibernate: 
+    select
+        u1_0.user_id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.first_name,
+        u1_0.is_active,
+        u1_0.is_verified,
+        u1_0.last_login,
+        u1_0.last_name,
+        u1_0.password_hash,
+        u1_0.profile_picture_url,
+        u1_0.role,
+        u1_0.updated_at 
+    from
+        users u1_0 
+    where
+        u1_0.user_id=?
+Hibernate: 
+    select
+        lc1_0.content_id,
+        lc1_0.content_text,
+        lc1_0.content_type,
+        lc1_0.content_url,
+        lc1_0.created_at,
+        lc1_0.difficulty_level,
+        lc1_0.duration_minutes,
+        lc1_0.goal_id,
+        lc1_0.metadata,
+        lc1_0.order_index,
+        lc1_0.parent_content_id,
+        lc1_0.title,
+        lc1_0.updated_at 
+    from
+        learning_content lc1_0 
+    where
+        lc1_0.goal_id=? 
+        and lc1_0.parent_content_id is null 
+    order by
+        lc1_0.order_index
+Hibernate: 
+    select
+        lc1_0.content_id,
+        lc1_0.content_text,
+        lc1_0.content_type,
+        lc1_0.content_url,
+        lc1_0.created_at,
+        lc1_0.difficulty_level,
+        lc1_0.duration_minutes,
+        lc1_0.goal_id,
+        lc1_0.metadata,
+        lc1_0.order_index,
+        lc1_0.parent_content_id,
+        lc1_0.title,
+        lc1_0.updated_at 
+    from
+        learning_content lc1_0 
+    where
+        lc1_0.goal_id=? 
+        and lc1_0.parent_content_id is null 
+    order by
+        lc1_0.order_index
+Hibernate: 
+    select
+        lc1_0.content_id,
+        lc1_0.content_text,
+        lc1_0.content_type,
+        lc1_0.content_url,
+        lc1_0.created_at,
+        lc1_0.difficulty_level,
+        lc1_0.duration_minutes,
+        lc1_0.goal_id,
+        lc1_0.metadata,
+        lc1_0.order_index,
+        lc1_0.parent_content_id,
+        lc1_0.title,
+        lc1_0.updated_at 
+    from
+        learning_content lc1_0 
+    where
+        lc1_0.goal_id=? 
+        and lc1_0.parent_content_id is null 
+    order by
+        lc1_0.order_index
+Hibernate: 
+    select
+        lc1_0.content_id,
+        lc1_0.content_text,
+        lc1_0.content_type,
+        lc1_0.content_url,
+        lc1_0.created_at,
+        lc1_0.difficulty_level,
+        lc1_0.duration_minutes,
+        lc1_0.goal_id,
+        lc1_0.metadata,
+        lc1_0.order_index,
+        lc1_0.parent_content_id,
+        lc1_0.title,
+        lc1_0.updated_at 
+    from
+        learning_content lc1_0 
+    where
+        lc1_0.goal_id=? 
+        and lc1_0.parent_content_id is null 
+    order by
+        lc1_0.order_index
+Hibernate: 
+    select
+        lc1_0.content_id,
+        lc1_0.content_text,
+        lc1_0.content_type,
+        lc1_0.content_url,
+        lc1_0.created_at,
+        lc1_0.difficulty_level,
+        lc1_0.duration_minutes,
+        lc1_0.goal_id,
+        lc1_0.metadata,
+        lc1_0.order_index,
+        lc1_0.parent_content_id,
+        lc1_0.title,
+        lc1_0.updated_at 
+    from
+        learning_content lc1_0 
+    where
+        lc1_0.goal_id=? 
+        and lc1_0.parent_content_id is null 
+    order by
+        lc1_0.order_index
+^C

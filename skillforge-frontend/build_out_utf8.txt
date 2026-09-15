@@ -1,0 +1,5 @@
+﻿
+> skillforge-frontend@0.0.0 build
+> tsc -b && vite build
+
+src/pages/LearnerDashboard.tsx(270,39): error TS18048: 'dailyGoal' is possibly 'undefined'.

@@ -1,0 +1,8 @@
+﻿src/pages/learner/CoursePlayer.tsx(4,55): error TS6133: 'Snackbar' is declared but its value is never read.
+src/pages/learner/CoursePlayer.tsx(5,15): error TS6133: 'Breadcrumbs' is declared but its value is never read.
+src/pages/learner/CoursePlayer.tsx(5,28): error TS6133: 'Link' is declared but its value is never read.
+src/pages/learner/CoursePlayer.tsx(9,5): error TS6133: 'Article' is declared but its value is never read.
+src/pages/learner/CoursePlayer.tsx(9,14): error TS6133: 'Check' is declared but its value is never read.
+src/pages/learner/CoursePlayer.tsx(11,22): error TS1484: 'LearningGoal' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/pages/learner/CoursePlayer.tsx(11,36): error TS1484: 'LearningContent' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/pages/learner/CoursePlayer.tsx(16,11): error TS6133: 'theme' is declared but its value is never read.

@@ -1,0 +1,672 @@
+Skillforge
+AI-Driven Adaptive Learning Platform
+Complete System Architecture & Design Specification
+Technology Stack:
+Frontend: React.js • Backend: Spring Boot • Database: PostgreSQL
+February 8, 2026
+
+Table of Contents
+Executive Summary
+System Architecture Overview
+Technology Stack & Justification
+Database Design
+Backend Architecture (Spring Boot)
+Frontend Architecture (React.js)
+AI Engine Integration
+Security & Authentication
+Deployment Architecture
+Project Structure
+Implementation Roadmap
+
+1. Executive Summary
+Skillforge is an AI-driven adaptive learning platform designed to provide personalized education experiences through intelligent content delivery, automated assessment generation, and real-time learning path adaptation. The system leverages artificial intelligence to analyze learner behavior, adapt content difficulty, generate contextual exams, and provide automated evaluation with detailed feedback.
+1.1 Key Features
+Adaptive Learning Paths: AI-powered content personalization based on learner performance and behavior
+AI-Generated Assessments: Automatic exam creation tailored to learning objectives and difficulty levels
+Automated Evaluation: Intelligent grading with detailed feedback and improvement suggestions
+Progress Tracking: Comprehensive analytics dashboard for learners, instructors, and administrators
+Multi-Role Support: Distinct interfaces and capabilities for Learners, Instructors, and Administrators
+1.2 System Capabilities
+Real-time skill assessment and gap analysis
+Dynamic content difficulty adjustment
+Personalized practice exercise recommendations
+Comprehensive learner analytics and insights
+Scalable cloud-based architecture
+
+2. System Architecture Overview
+Skillforge follows a modern three-tier architecture pattern with clear separation of concerns between presentation, business logic, and data layers. The system is designed for scalability, maintainability, and extensibility.
+2.1 Architecture Layers
+Presentation Layer (Frontend)
+React.js single-page application (SPA)
+Responsive design for web and mobile access
+Role-based UI components
+Real-time updates via WebSocket connections
+Application Layer (Backend)
+Spring Boot RESTful API services
+JWT-based authentication and authorization
+Business logic and workflow orchestration
+Integration with AI/ML services
+Data Layer
+PostgreSQL relational database for structured data
+Redis cache for session management and performance
+Amazon S3 / MinIO for file storage (learning materials, media)
+AI/ML Layer
+Python-based AI services (Flask/FastAPI microservices)
+Machine learning models for behavior analysis
+Natural Language Processing for exam generation
+Automated grading and feedback generation
+
+3. Technology Stack & Justification
+3.1 Frontend Technologies
+3.2 Backend Technologies
+3.3 Database & Storage
+3.4 AI/ML Technologies
+Python 3.10+ with Flask/FastAPI for AI microservices
+OpenAI GPT-4 API or Anthropic Claude for content generation
+Scikit-learn for behavior analysis and pattern recognition
+TensorFlow/PyTorch for custom ML models
+spaCy or NLTK for natural language processing
+LangChain for AI workflow orchestration
+
+4. Database Design
+The database schema is designed to support all platform features with proper normalization, indexing, and relationships. PostgreSQL is recommended for its robustness, JSONB support for flexible AI parameters, and excellent performance with complex queries.
+4.1 Core Entities
+User Table
+CREATE TABLE users (
+    user_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    role VARCHAR(20) NOT NULL CHECK (role IN ('LEARNER', 'INSTRUCTOR', 'ADMIN')),
+    profile_picture_url VARCHAR(500),
+    is_active BOOLEAN DEFAULT true,
+    is_verified BOOLEAN DEFAULT false,
+    last_login TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_role ON users(role);
+Learning Goal Table
+CREATE TABLE learning_goals (
+    goal_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    instructor_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    title VARCHAR(200) NOT NULL,
+    description TEXT,
+    subject VARCHAR(100) NOT NULL,
+    difficulty_level VARCHAR(20) CHECK (difficulty_level IN ('BEGINNER', 'INTERMEDIATE', 'ADVANCED')),
+    prerequisites TEXT[],
+    learning_outcomes TEXT[],
+    is_published BOOLEAN DEFAULT false,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_learning_goals_instructor ON learning_goals(instructor_id);
+CREATE INDEX idx_learning_goals_subject ON learning_goals(subject);
+Learning Content Table
+CREATE TABLE learning_content (
+    content_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    goal_id UUID NOT NULL REFERENCES learning_goals(goal_id) ON DELETE CASCADE,
+    title VARCHAR(200) NOT NULL,
+    content_type VARCHAR(50) NOT NULL CHECK (content_type IN ('VIDEO', 'TEXT', 'PDF', 'INTERACTIVE', 'QUIZ')),
+    content_url VARCHAR(500),
+    content_text TEXT,
+    duration_minutes INTEGER,
+    difficulty_level VARCHAR(20) NOT NULL,
+    order_index INTEGER NOT NULL,
+    metadata JSONB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_learning_content_goal ON learning_content(goal_id);
+CREATE INDEX idx_learning_content_difficulty ON learning_content(difficulty_level);
+Learner Profile Table
+CREATE TABLE learner_profiles (
+    profile_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID UNIQUE NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    current_skill_level VARCHAR(20),
+    learning_style JSONB,
+    interests TEXT[],
+    goals TEXT[],
+    time_zone VARCHAR(50),
+    preferred_difficulty VARCHAR(20),
+    ai_parameters JSONB DEFAULT '{}',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_learner_profiles_user ON learner_profiles(user_id);
+Enrollment Table
+CREATE TABLE enrollments (
+    enrollment_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    learner_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    goal_id UUID NOT NULL REFERENCES learning_goals(goal_id) ON DELETE CASCADE,
+    status VARCHAR(20) DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'COMPLETED', 'PAUSED', 'DROPPED')),
+    progress_percentage DECIMAL(5,2) DEFAULT 0.00,
+    enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    completed_at TIMESTAMP,
+    last_accessed TIMESTAMP,
+    UNIQUE(learner_id, goal_id)
+);
+
+CREATE INDEX idx_enrollments_learner ON enrollments(learner_id);
+CREATE INDEX idx_enrollments_goal ON enrollments(goal_id);
+CREATE INDEX idx_enrollments_status ON enrollments(status);
+
+Skill Assessment Table
+CREATE TABLE skill_assessments (
+    assessment_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    learner_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    goal_id UUID NOT NULL REFERENCES learning_goals(goal_id) ON DELETE CASCADE,
+    assessment_type VARCHAR(50) NOT NULL CHECK (assessment_type IN ('INITIAL', 'PERIODIC', 'FINAL')),
+    questions JSONB NOT NULL,
+    answers JSONB NOT NULL,
+    score DECIMAL(5,2),
+    skill_gaps JSONB,
+    recommended_level VARCHAR(20),
+    taken_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_skill_assessments_learner ON skill_assessments(learner_id);
+CREATE INDEX idx_skill_assessments_goal ON skill_assessments(goal_id);
+Learning Path Table
+CREATE TABLE learning_paths (
+    path_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    enrollment_id UUID NOT NULL REFERENCES enrollments(enrollment_id) ON DELETE CASCADE,
+    current_content_id UUID REFERENCES learning_content(content_id),
+    content_sequence UUID[] NOT NULL,
+    adaptations JSONB DEFAULT '[]',
+    ai_recommendations JSONB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_learning_paths_enrollment ON learning_paths(enrollment_id);
+Practice Exercise Table
+CREATE TABLE practice_exercises (
+    exercise_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    content_id UUID NOT NULL REFERENCES learning_content(content_id) ON DELETE CASCADE,
+    question_text TEXT NOT NULL,
+    question_type VARCHAR(50) CHECK (question_type IN ('MCQ', 'TRUE_FALSE', 'SHORT_ANSWER', 'CODE', 'ESSAY')),
+    options JSONB,
+    correct_answer TEXT,
+    explanation TEXT,
+    difficulty_level VARCHAR(20) NOT NULL,
+    points INTEGER DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_practice_exercises_content ON practice_exercises(content_id);
+Exercise Attempt Table
+CREATE TABLE exercise_attempts (
+    attempt_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    learner_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    exercise_id UUID NOT NULL REFERENCES practice_exercises(exercise_id) ON DELETE CASCADE,
+    answer_given TEXT,
+    is_correct BOOLEAN,
+    points_earned INTEGER,
+    time_spent_seconds INTEGER,
+    feedback TEXT,
+    attempted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_exercise_attempts_learner ON exercise_attempts(learner_id);
+CREATE INDEX idx_exercise_attempts_exercise ON exercise_attempts(exercise_id);
+Exam Template Table
+CREATE TABLE exam_templates (
+    template_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    goal_id UUID NOT NULL REFERENCES learning_goals(goal_id) ON DELETE CASCADE,
+    instructor_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    title VARCHAR(200) NOT NULL,
+    description TEXT,
+    total_questions INTEGER NOT NULL,
+    duration_minutes INTEGER NOT NULL,
+    passing_score DECIMAL(5,2) NOT NULL,
+    difficulty_distribution JSONB,
+    question_types JSONB,
+    is_approved BOOLEAN DEFAULT false,
+    approved_by UUID REFERENCES users(user_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_exam_templates_goal ON exam_templates(goal_id);
+CREATE INDEX idx_exam_templates_instructor ON exam_templates(instructor_id);
+
+Exam Instance Table
+CREATE TABLE exam_instances (
+    exam_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    template_id UUID NOT NULL REFERENCES exam_templates(template_id) ON DELETE CASCADE,
+    learner_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    questions JSONB NOT NULL,
+    answers JSONB,
+    score DECIMAL(5,2),
+    max_score DECIMAL(5,2) NOT NULL,
+    passed BOOLEAN,
+    status VARCHAR(20) DEFAULT 'SCHEDULED' CHECK (status IN ('SCHEDULED', 'IN_PROGRESS', 'SUBMITTED', 'GRADED')),
+    started_at TIMESTAMP,
+    submitted_at TIMESTAMP,
+    graded_at TIMESTAMP,
+    ai_feedback JSONB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_exam_instances_template ON exam_instances(template_id);
+CREATE INDEX idx_exam_instances_learner ON exam_instances(learner_id);
+CREATE INDEX idx_exam_instances_status ON exam_instances(status);
+Learner Behavior Table
+CREATE TABLE learner_behavior (
+    behavior_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    learner_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    enrollment_id UUID NOT NULL REFERENCES enrollments(enrollment_id) ON DELETE CASCADE,
+    event_type VARCHAR(50) NOT NULL,
+    event_data JSONB NOT NULL,
+    content_id UUID REFERENCES learning_content(content_id),
+    session_duration_seconds INTEGER,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_learner_behavior_learner ON learner_behavior(learner_id);
+CREATE INDEX idx_learner_behavior_enrollment ON learner_behavior(enrollment_id);
+CREATE INDEX idx_learner_behavior_timestamp ON learner_behavior(timestamp);
+Progress Tracking Table
+CREATE TABLE progress_tracking (
+    progress_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    learner_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    content_id UUID NOT NULL REFERENCES learning_content(content_id) ON DELETE CASCADE,
+    enrollment_id UUID NOT NULL REFERENCES enrollments(enrollment_id) ON DELETE CASCADE,
+    status VARCHAR(20) DEFAULT 'NOT_STARTED' CHECK (status IN ('NOT_STARTED', 'IN_PROGRESS', 'COMPLETED')),
+    completion_percentage DECIMAL(5,2) DEFAULT 0.00,
+    time_spent_seconds INTEGER DEFAULT 0,
+    last_accessed TIMESTAMP,
+    completed_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(learner_id, content_id, enrollment_id)
+);
+
+CREATE INDEX idx_progress_tracking_learner ON progress_tracking(learner_id);
+CREATE INDEX idx_progress_tracking_content ON progress_tracking(content_id);
+CREATE INDEX idx_progress_tracking_enrollment ON progress_tracking(enrollment_id);
+System Configuration Table
+CREATE TABLE system_config (
+    config_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    config_key VARCHAR(100) UNIQUE NOT NULL,
+    config_value JSONB NOT NULL,
+    description TEXT,
+    updated_by UUID REFERENCES users(user_id),
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_system_config_key ON system_config(config_key);
+AI Parameters Table
+CREATE TABLE ai_parameters (
+    param_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    parameter_name VARCHAR(100) NOT NULL,
+    parameter_category VARCHAR(50) NOT NULL CHECK (parameter_category IN ('ADAPTATION', 'GENERATION', 'EVALUATION')),
+    parameter_value JSONB NOT NULL,
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_ai_parameters_category ON ai_parameters(parameter_category);
+
+4.2 Database Relationships Summary
+Users (1:1) Learner Profiles for learner-specific data
+Users (1:N) Learning Goals created by instructors
+Learning Goals (1:N) Learning Content items
+Learning Content (1:N) Practice Exercises
+Users + Learning Goals (M:N through Enrollments)
+Enrollments (1:1) Learning Paths for personalized sequences
+Users + Practice Exercises (M:N through Exercise Attempts)
+Exam Templates (1:N) Exam Instances for generated exams
+Users + Content (tracking through Progress Tracking)
+Learner Behavior logs all user interactions
+4.3 Key Design Decisions
+UUID Primary Keys: Better for distributed systems and security
+JSONB Columns: Flexible storage for AI parameters, metadata, and evolving structures
+Proper Indexing: Optimized queries on frequently accessed columns
+Timestamps: Comprehensive audit trail with created_at and updated_at
+Soft Deletes: is_active flags preserve data integrity
+Cascading Deletes: Proper foreign key constraints maintain referential integrity
+
+5. Backend Architecture (Spring Boot)
+5.1 Project Structure
+skillforge-backend/
+├── src/main/java/com/skillforge/
+│   ├── SkillforgeApplication.java
+│   ├── config/
+│   │   ├── SecurityConfig.java
+│   │   ├── WebSocketConfig.java
+│   │   ├── CorsConfig.java
+│   │   ├── RedisConfig.java
+│   │   └── S3Config.java
+│   ├── controller/
+│   │   ├── AuthController.java
+│   │   ├── UserController.java
+│   │   ├── LearningGoalController.java
+│   │   ├── ContentController.java
+│   │   ├── EnrollmentController.java
+│   │   ├── AssessmentController.java
+│   │   ├── ExamController.java
+│   │   ├── ProgressController.java
+│   │   └── AdminController.java
+│   ├── dto/
+│   │   ├── request/
+│   │   └── response/
+│   ├── entity/
+│   │   ├── User.java
+│   │   ├── LearningGoal.java
+│   │   ├── LearningContent.java
+│   │   ├── Enrollment.java
+│   │   ├── LearnerProfile.java
+│   │   ├── SkillAssessment.java
+│   │   ├── LearningPath.java
+│   │   ├── ExamTemplate.java
+│   │   ├── ExamInstance.java
+│   │   ├── PracticeExercise.java
+│   │   ├── ExerciseAttempt.java
+│   │   ├── LearnerBehavior.java
+│   │   └── ProgressTracking.java
+│   ├── repository/
+│   │   └── [JPA Repositories for each entity]
+│   ├── service/
+│   │   ├── AuthService.java
+│   │   ├── UserService.java
+│   │   ├── LearningGoalService.java
+│   │   ├── ContentService.java
+│   │   ├── EnrollmentService.java
+│   │   ├── AssessmentService.java
+│   │   ├── ExamService.java
+│   │   ├── ProgressService.java
+│   │   ├── AIIntegrationService.java
+│   │   ├── FileStorageService.java
+│   │   └── AnalyticsService.java
+│   ├── security/
+│   │   ├── JwtTokenProvider.java
+│   │   ├── JwtAuthenticationFilter.java
+│   │   └── UserDetailsServiceImpl.java
+│   ├── exception/
+│   │   ├── GlobalExceptionHandler.java
+│   │   ├── ResourceNotFoundException.java
+│   │   ├── UnauthorizedException.java
+│   │   └── ValidationException.java
+│   └── util/
+│       ├── Constants.java
+│       ├── ResponseBuilder.java
+│       └── ValidationUtils.java
+└── src/main/resources/
+    ├── application.yml
+    ├── application-dev.yml
+    ├── application-prod.yml
+    └── db/migration/
+        └── [Flyway migration scripts]
+
+5.2 Key API Endpoints
+Authentication Endpoints
+Learner Endpoints
+
+Instructor Endpoints
+Admin Endpoints
+
+5.3 Security Configuration
+JWT Authentication Flow
+User submits credentials to /api/auth/login
+Server validates credentials against database
+On success, generate JWT access token (15 min expiry) and refresh token (7 days)
+Return tokens to client
+Client includes access token in Authorization header for subsequent requests
+JwtAuthenticationFilter validates token on each request
+On token expiry, client uses refresh token to get new access token
+Role-Based Access Control
+LEARNER: Access to learning content, assessments, exams, personal progress
+INSTRUCTOR: Create goals, upload content, view analytics, approve templates
+ADMIN: Full system access, user management, AI configuration, system monitoring
+Endpoints protected with @PreAuthorize annotations
+
+6. Frontend Architecture (React.js)
+6.1 Project Structure
+skillforge-frontend/
+├── public/
+│   ├── index.html
+│   ├── favicon.ico
+│   └── assets/
+├── src/
+│   ├── App.tsx
+│   ├── index.tsx
+│   ├── components/
+│   │   ├── common/
+│   │   │   ├── Header.tsx
+│   │   │   ├── Footer.tsx
+│   │   │   ├── Sidebar.tsx
+│   │   │   ├── Loading.tsx
+│   │   │   └── ErrorBoundary.tsx
+│   │   ├── learner/
+│   │   │   ├── Dashboard.tsx
+│   │   │   ├── SkillAssessment.tsx
+│   │   │   ├── ContentViewer.tsx
+│   │   │   ├── PracticeExercise.tsx
+│   │   │   ├── ExamInterface.tsx
+│   │   │   └── ProgressTracker.tsx
+│   │   ├── instructor/
+│   │   │   ├── Dashboard.tsx
+│   │   │   ├── GoalCreator.tsx
+│   │   │   ├── ContentUploader.tsx
+│   │   │   ├── AnalyticsDashboard.tsx
+│   │   │   └── TemplateApproval.tsx
+│   │   └── admin/
+│   │       ├── Dashboard.tsx
+│   │       ├── UserManagement.tsx
+│   │       ├── AIConfiguration.tsx
+│   │       └── SystemMonitor.tsx
+│   ├── pages/
+│   │   ├── Login.tsx
+│   │   ├── Register.tsx
+│   │   ├── Home.tsx
+│   │   ├── LearnerDashboard.tsx
+│   │   ├── InstructorDashboard.tsx
+│   │   └── AdminDashboard.tsx
+│   ├── features/
+│   │   ├── auth/
+│   │   │   ├── authSlice.ts
+│   │   │   └── authAPI.ts
+│   │   ├── learner/
+│   │   │   ├── learnerSlice.ts
+│   │   │   └── learnerAPI.ts
+│   │   ├── instructor/
+│   │   │   ├── instructorSlice.ts
+│   │   │   └── instructorAPI.ts
+│   │   └── admin/
+│   │       ├── adminSlice.ts
+│   │       └── adminAPI.ts
+│   ├── hooks/
+│   │   ├── useAuth.ts
+│   │   ├── useWebSocket.ts
+│   │   └── useDebounce.ts
+│   ├── services/
+│   │   ├── api.ts
+│   │   ├── websocket.ts
+│   │   └── storage.ts
+│   ├── store/
+│   │   └── store.ts
+│   ├── routes/
+│   │   ├── AppRoutes.tsx
+│   │   ├── PrivateRoute.tsx
+│   │   └── RoleRoute.tsx
+│   ├── types/
+│   │   ├── user.types.ts
+│   │   ├── content.types.ts
+│   │   ├── exam.types.ts
+│   │   └── api.types.ts
+│   ├── utils/
+│   │   ├── validation.ts
+│   │   ├── formatting.ts
+│   │   └── constants.ts
+│   └── styles/
+│       ├── globals.css
+│       └── theme.ts
+├── package.json
+└── tsconfig.json
+
+6.2 Key Features Implementation
+State Management with Redux
+Redux Toolkit is used for centralized state management, organizing state by feature domains with corresponding slices for auth, learner, instructor, and admin functionalities.
+Real-time Updates with WebSocket
+Socket.IO client connects to the backend for real-time progress updates, live exam monitoring, and instant notifications. Custom React hooks (useWebSocket) manage connection lifecycle and event handling.
+Protected Routes
+Route guards verify authentication status and user roles before rendering components. PrivateRoute checks authentication, while RoleRoute ensures role-based access control.
+Responsive Design
+Mobile-first approach using Material-UI Grid system and responsive breakpoints ensures optimal user experience across desktop, tablet, and mobile devices.
+6.3 Component Architecture
+Learner Dashboard Components
+SkillAssessment: Interactive quiz interface with progress indicators
+ContentViewer: Adaptive content display supporting video, text, PDF, and interactive formats
+PracticeExercise: Exercise interface with instant feedback and explanations
+ExamInterface: Timed exam with auto-submit and question navigation
+ProgressTracker: Visual progress charts showing completion and performance metrics
+Instructor Dashboard Components
+GoalCreator: Form wizard for creating comprehensive learning goals
+ContentUploader: Multi-format file upload with metadata input
+AnalyticsDashboard: Data visualization showing learner performance and engagement
+TemplateApproval: Review and approve AI-generated exam templates
+Admin Dashboard Components
+UserManagement: CRUD operations for all users with role assignment
+AIConfiguration: Interface for tuning AI parameters and thresholds
+SystemMonitor: Real-time system metrics, performance graphs, error logs
+
+7. AI Engine Integration
+7.1 AI Microservices Architecture
+The AI engine is implemented as a set of Python microservices that communicate with the main Spring Boot backend via REST APIs. This separation allows for independent scaling and technology-specific optimizations.
+AI Service Components
+Behavior Analysis Service: Analyzes learner interactions and predicts optimal learning paths
+Content Adaptation Service: Adjusts difficulty and recommends next content
+Exam Generation Service: Creates contextual questions using LLM APIs
+Auto-Evaluation Service: Grades responses and generates feedback
+7.2 Key AI Capabilities
+1. Learner Behavior Analysis
+Track time spent per content item
+Analyze exercise attempt patterns (speed, accuracy, retry frequency)
+Identify learning style (visual, auditory, kinesthetic) from interaction data
+Detect struggling areas and knowledge gaps
+2. Adaptive Learning Path Generation
+Use collaborative filtering to recommend similar successful learning paths
+Adjust content difficulty based on assessment scores and exercise performance
+Skip prerequisite content if proficiency demonstrated
+Insert remedial content when skill gaps detected
+3. AI-Powered Exam Generation
+Extract key concepts from learning content using NLP
+Generate contextual questions at specified difficulty levels
+Ensure coverage across all learning objectives
+Create distractors for multiple-choice questions
+4. Automated Response Evaluation
+Exact match for MCQ and True/False questions
+Semantic similarity scoring for short answers
+LLM-based evaluation for essays and code submissions
+Generate personalized feedback highlighting strengths and areas for improvement
+7.3 AI Service API Endpoints
+
+8. Security & Authentication
+8.1 Security Measures
+Authentication & Authorization
+JWT-based stateless authentication
+Bcrypt password hashing (strength 12)
+Role-based access control (RBAC)
+Refresh token rotation for enhanced security
+Data Protection
+HTTPS/TLS encryption for all communications
+Database encryption at rest
+Sensitive data encryption (AES-256)
+Secure file storage with signed URLs
+API Security
+CORS configuration with whitelist
+Rate limiting (100 requests/minute per user)
+Input validation and sanitization
+SQL injection prevention via parameterized queries
+XSS protection through output encoding
+Monitoring & Logging
+Centralized logging with ELK stack
+Security event monitoring and alerting
+Audit trails for sensitive operations
+Failed login attempt tracking
+
+9. Deployment Architecture
+9.1 Recommended Infrastructure
+Production Environment
+Cloud Provider: AWS, Google Cloud, or Azure
+Container Orchestration: Kubernetes (EKS, GKE, or AKS)
+Load Balancer: Application Load Balancer with SSL termination
+CDN: CloudFront/CloudFlare for static asset delivery
+Database & Storage
+Primary Database: Amazon RDS PostgreSQL (Multi-AZ)
+Cache: Amazon ElastiCache Redis (cluster mode)
+File Storage: Amazon S3 with CloudFront
+Backup: Automated daily snapshots with 30-day retention
+Container Deployment
+Frontend: React app in Nginx container (3+ replicas)
+Backend: Spring Boot application (5+ replicas with auto-scaling)
+AI Services: Python microservices (2+ replicas per service)
+Container Registry: ECR, GCR, or Azure Container Registry
+9.2 CI/CD Pipeline
+Code commit triggers webhook to CI/CD platform (GitHub Actions, GitLab CI, Jenkins)
+Automated testing (unit, integration, e2e)
+Security scanning (SAST, dependency vulnerabilities)
+Build Docker images with version tags
+Push images to container registry
+Deploy to staging environment
+Run smoke tests and integration tests
+Manual approval gate for production
+Rolling deployment to production with health checks
+
+10. Implementation Roadmap
+Phase 1: Foundation (Weeks 1-4)
+Setup development environment and repositories
+Initialize Spring Boot and React projects
+Design and implement database schema
+Setup PostgreSQL, Redis, and S3/MinIO
+Implement authentication system (JWT, login, registration)
+Create basic user management APIs
+Build login/registration UI components
+Phase 2: Core Features (Weeks 5-10)
+Implement learning goal and content management
+Build instructor dashboard for content upload
+Create skill assessment module
+Develop content viewer for multiple formats
+Implement enrollment and progress tracking
+Build practice exercise system
+Create learner dashboard with content access
+Phase 3: AI Integration (Weeks 11-16)
+Setup Python AI microservices infrastructure
+Implement behavior analysis engine
+Build adaptive learning path algorithm
+Integrate LLM API for exam generation
+Develop automated evaluation system
+Create exam interface with auto-grading
+Implement feedback generation
+Phase 4: Analytics & Admin (Weeks 17-20)
+Build analytics service for learner insights
+Create instructor analytics dashboard
+Implement admin panel for user management
+Build AI configuration interface
+Create system monitoring dashboard
+Implement WebSocket for real-time updates
+Phase 5: Testing & Deployment (Weeks 21-24)
+Comprehensive testing (unit, integration, e2e)
+Performance optimization and load testing
+Security audit and penetration testing
+Setup CI/CD pipeline
+Configure production infrastructure
+User acceptance testing
+Documentation and training materials
+Production deployment and monitoring
+
+11. Conclusion
+This comprehensive architecture document provides a complete blueprint for building Skillforge, an AI-driven adaptive learning platform. The design leverages modern technologies including React.js for a responsive frontend, Spring Boot for a robust backend, PostgreSQL for reliable data storage, and Python-based AI services for intelligent personalization.
+The modular architecture ensures scalability, maintainability, and extensibility. Each component is designed with clear separation of concerns, enabling independent development and deployment. The AI engine provides sophisticated capabilities for behavior analysis, adaptive content delivery, automated exam generation, and intelligent evaluation.
+Security is paramount throughout the design, with JWT authentication, role-based access control, data encryption, and comprehensive monitoring. The deployment architecture supports high availability and scalability through containerization and cloud infrastructure.
+The 24-week implementation roadmap provides a structured approach to development, progressing from foundation to core features, AI integration, analytics, and finally testing and deployment. This phased approach ensures incremental value delivery while maintaining quality and stability.
+With this design as a guide, development teams can confidently build a production-ready adaptive learning platform that delivers personalized educational experiences at scale.
+Ready to Build the Future of Education

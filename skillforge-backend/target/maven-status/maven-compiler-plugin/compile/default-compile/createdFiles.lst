@@ -1,0 +1,17 @@
+com\skillforge\entity\Exam$ExamBuilder.class
+com\skillforge\repository\LearningGoalRepository.class
+com\skillforge\entity\LearningGoal$LearningGoalBuilder.class
+com\skillforge\entity\Exam.class
+com\skillforge\service\ExamService$1.class
+com\skillforge\entity\LearningContent$LearningContentBuilder.class
+com\skillforge\entity\User$UserBuilder.class
+com\skillforge\dto\request\LoginRequest.class
+com\skillforge\controller\ExamController.class
+com\skillforge\entity\LearningGoal.class
+com\skillforge\entity\User.class
+com\skillforge\entity\User$Role.class
+com\skillforge\controller\AIController.class
+com\skillforge\entity\Exam$ExamStatus.class
+com\skillforge\entity\LearningContent.class
+com\skillforge\entity\LearningContent$ContentType.class
+com\skillforge\entity\LearningGoal$DifficultyLevel.class
